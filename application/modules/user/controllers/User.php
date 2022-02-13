@@ -11,8 +11,11 @@ class User extends CI_Controller
 
     public function index()
     {
-        $data['title'] = 'My Profile';
-        $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
+       $data['title'] = 'My Profile';
+         
+       $data['user']= $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
+       
+     
 
         $this->load->view('templates/header', $data);
         $this->load->view('templates/sidebar', $data);
@@ -26,7 +29,11 @@ class User extends CI_Controller
     {
         $data['title'] = 'Edit Profile';
         $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
-
+        
+        $this->load->model('User_model', 'userM');
+       $data['namaOpd'] = $this->userM->getNamaOpd();
+        //echo var_dump($namaOpd);
+        
         $this->form_validation->set_rules('name', 'Full Name', 'required|trim');
 
         if ($this->form_validation->run() == false) {
@@ -37,6 +44,7 @@ class User extends CI_Controller
             $this->load->view('templates/footer');
         } else {
             $name = $this->input->post('name');
+            $opd = $this->input->post('opd');
             $email = $this->input->post('email');
 
             // cek jika ada gambar yang akan diupload
@@ -62,6 +70,7 @@ class User extends CI_Controller
             }
 
             $this->db->set('name', $name);
+            $this->db->set('id_opd', $opd);
             $this->db->where('email', $email);
             $this->db->update('user');
 
